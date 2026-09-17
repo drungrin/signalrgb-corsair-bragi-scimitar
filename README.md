@@ -59,6 +59,31 @@ redistributed here only for use with SignalRGB itself.
 
 ## Installing
 
-In SignalRGB, open **Settings → Add-ons**, choose **Add add-on**, and paste this
-repository's URL. Restart SignalRGB, then set each button under the device's
-settings.
+**Not through Settings → Add-ons.** That route cannot work here, and the reason
+is worth knowing: SignalRGB keeps several plugin sources, and for a given
+`VID:PID` the last one crawled wins. Add-ons added by URL are crawled *before*
+the plugins SignalRGB ships, so this plugin would register `1b1c:2b00` and the
+stock Corsair plugin would immediately take it back. Its own plugin folder is
+crawled after, and does win.
+
+So copy `corsair-bragi-scimitar.js` into:
+
+```text
+%LOCALAPPDATA%\VortxEngine\app-<version>\Signal-x64\Plugins\
+```
+
+under a name that sorts after `Corsair`, such as
+`ZZZ_Corsair_Bragi_Scimitar.js`, and restart SignalRGB. The crawler log then
+reads:
+
+```text
+HID plugin with id 0x1B1C:0x2B00 already exists. Overwriting with new path: ...ZZZ_Corsair_Bragi_Scimitar.js
+```
+
+and the dongle appears as **Corsair Bragi Device (Scimitar side buttons)**. Set
+each button under that device's settings.
+
+A SignalRGB update installs a new `app-<version>` folder and leaves the copy
+behind, so it has to be put back afterwards.
+[`headless-rgb`](https://github.com/drungrin/headless-rgb) does both steps with
+`python tools/vendor_bragi.py --install`.
